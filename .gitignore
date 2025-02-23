@@ -1,0 +1,4 @@
+#certora 
+.certora_internal*
+#gambit
+collect.json
