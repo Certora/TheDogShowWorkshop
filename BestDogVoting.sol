@@ -212,12 +212,12 @@ contract BestDogVoting {
     /// @notice Check if a dog is a winner in a category.
     /// @param _dog The dog (address) to check.
     /// @param _category The category id.
-    /// @return isWinner True if _dog is a winner in _category.
-    function isWinner(address _dog, uint256 _category) public returns (bool isWinner) {
+    /// @return _isWinner True if _dog is a winner in _category.
+    function isWinner(address _dog, uint256 _category) public view returns (bool _isWinner) {
         Category storage cat = categories[_category];
         for (uint256 i = 0; i < cat.winners.length; i++) {
             if (cat.winners[i] == _dog) {
-                isWinner = true;
+                _isWinner = true;
                 break;
             }
         }
