@@ -44,6 +44,7 @@ contract BestDogVoting {
         mapping(address => uint256) votesPerDog;
         mapping(address => bool) hasVoted;
     }
+
     // Mapping from category ID to its Category struct.
     mapping(uint256 => Category) public categories;
 
@@ -60,9 +61,7 @@ contract BestDogVoting {
     // Modifiers
     // ---------------------------
     modifier onlyOwner() {
-        // mutation wrong check for owner
-        //require(msg.sender == owner, "Not owner");
-        require(msg.sender != address(0), "Not owner");
+        require(msg.sender == owner, "Not owner");
         _;
     }
 
@@ -104,7 +103,6 @@ contract BestDogVoting {
         totalFeesCollected += msg.value;
 
         Dog storage d = dogs[_dog];
-
         // Ensure the dog hasn't already been nominated in this category.
         require(!d.listed[_category], "Dog already nominated in this category");
 
@@ -127,7 +125,6 @@ contract BestDogVoting {
         require(_category < categoryCounter, "Category does not exist");
         Category storage cat = categories[_category];
         require(block.timestamp < cat.deadline, "Voting period has ended");
-
         // Each address may only vote once in this category.
         require(!cat.hasVoted[msg.sender], "Already voted in this category");
 

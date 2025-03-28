@@ -1,5 +1,11 @@
 use builtin rule sanity; 
 
+/* 
+
+Explain your solutions HERE
+
+*/
+
 methods {
 // methods that are envfree - not dependent on the environment 
     function owner() external returns (address) envfree; 
@@ -198,12 +204,11 @@ hook Sstore  currentContract.dogs[KEY address dog].claimed[KEY uint256 category]
 
 ///@title The total fees collected is not more than the total nomination fees over all time 
 invariant totalFees() 
-         totalFeesCollected()  <= countAllNominated * nominationFee(); 
+    totalFeesCollected()  <= countAllNominated * nominationFee(); 
 
 ///@title The total eth held by the contract is at least the fees collected puls the total votes minus the already claimed prizes 
 invariant solvency() 
-    nativeBalances[currentContract] >=   totalFeesCollected() + 
-                                    (sumTotalVotes - sumAmountClaimed) 
+    nativeBalances[currentContract] >= totalFeesCollected() + (sumTotalVotes - sumAmountClaimed) 
     { 
         preserved with (env e) {
             require e.msg.sender != currentContract;

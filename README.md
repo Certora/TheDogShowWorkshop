@@ -1,79 +1,138 @@
+# Certora Take-Home Exercise — FV Researcher Application
 
-# Certora EthDenver 2025 Challenge  
+Welcome, and thank you for your interest in the [Formal Verification Researcher](https://www.certora.com/careers/formal-verification-researcher) position at Certora!
 
-Welcome to the Certora ETHDenver 2025 Challenge! Your goal is to find a buggy version of `BestDogVoting` that is not detected by the provided formal verification rules but still qualifies as a high-severity issue.
-
-To be considered a high-severity bug, the issue must impact either:
-1. Voting outcomes
-2. The assets collected/distributed
-
-The buggy version must implement the same functions as the original contract while introducing a critical flaw.
-
-We suggest you try adding mutations that are caught by each rule and combinations of rules to ensure you understand the rules.
-
-## Challenge rules
-
-### 1. Submit a Missing Spec
-
-To submit a missing specification, follow these steps:
-
-1. **Create mutations**: Add mutations to the mutations folder.
-
-    - A mutation is a simple, one-line change. It can be:
-        - A modification of an existing line.
-        - An insertion of a new line.
-        - A removal of an existing line.
-
-2. **Run `certoraMutate` and check your results**.
-
-    - For example, in this [mutation report](https://mutation-testing.certora.com/?id=967292c9-ce5e-4495-9a08-770cff7fde69&anonymousKey=a3a0b7ec-c27b-44df-b11c-49213338da57BestDogVoting_M1), 
-    [BestDogVoting_M1](https://github.com/Certora/TheDogShowWorkshop/blob/main/mutations/BestDogVoting_M1.sol) 
-    and [BestDogVoting_M2](https://github.com/Certora/TheDogShowWorkshop/blob/main/mutations/BestDogVoting_M2.sol) are caught by the rules.
-    [BestDogVoting_M3](https://github.com/Certora/TheDogShowWorkshop/blob/main/mutations/BestDogVoting_M3.sol) is not caught by the rules. However, since it is a gas optimization issue, it does not qualify as a missed bug.
-
-3. **Submit successful mutations**
-
-    - Submissions should have the following syntax:
-        - "Mutation_[id].sol [description of mutation] [link to mutation report]
-        - If submitting multiple mutation reports, submit them in one form where each report is its own line
+This take-home exercise is designed to evaluate your understanding of smart contract verification, your ability to reason about specifications, and your skill in identifying and expressing critical correctness properties.
 
 ---
 
-### 2. Earn Extra Points
+## 🧠 Objective
 
-Go beyond just finding a missing bug—help improve the rules!
+Your goal is to install and run the Certora Prover, understand a simple Solidity smart contract and its associated formal specification, and complete three short formal verification tasks.
 
-1. **Fix the spec** to also capture the missing bug.
-    - The fix should either modify the rule or add a new rule but in a way that is not tailored to the specific bug case (you should be able to explain the property in one sentence)
+---
 
-2. **Submit a `certoraMutate`** run with the updated spec.
+## 📦 Setup Instructions
 
-## Running the Verification
+### 1. Clone the Repository
 
-1. Install the Python SDK
-    ```sh
-    pip install certora-cli
-    ```
+Start by forking and cloning this repository into a **private** GitHub repository. This will be your working space for the exercise.
 
-2. Run Verification
-    From this directory, execute:
-    ```sh
-    certoraRun certora.conf
-    ```
+```bash
+git clone --bare <this-repo> // create a bare clone
+cd <this-repo>
+git push --mirror git@github.com:<your_username>/<name-of-your-private-github-repo>.git // mirror push against your private repo
+cd ..
+rm -rf <this-repo> // remove your bare clone
+cd ~/<project>
+git clone git@github.com:<your_username>/<name-of-your-private-github-repo>.git // clone your private repo
+```
 
-3. Run `certoraMutate`
-    To run `certoraMutate`:
-    1. Add mutations to the `mutations` folder.
-    2. Execute `certoraMutate certora.conf`
+### 2. Install the Certora CLI
 
-## Submission Deadline
+Follow the instructions in the [Certora installation guide](https://docs.certora.com/en/latest/docs/user-guide/getting-started/install.html).
 
-Ensure your submission is completed before the deadline. Late submissions will not be considered.
+Make sure you can successfully run the prover with `certoraRun`.
 
-All submission should be made to the [submission form](https://forms.gle/Z64eWvh5qLCQmKoJA). Please include all mutations and specs in one form submission.
 
-## Need Help?
+### 3. Run the Provided Specification
 
-If you encounter issues or have questions, check out our detailed [installation guide](https://docs.certora.com/en/latest/docs/user-guide/getting-started/install.html).
+To verify the contract using the existing specification, run:
 
-Good luck, and happy hacking! 🚀
+```bash
+certoraRun dogVoting.conf
+```
+
+This will run the Certora Prover on `BestDogVoting.sol` using the provided rules.
+
+---
+
+## 📁 Repository Structure
+```bash
+.
+├── contracts/
+│   └── BestDogVoting.sol          # Solidity contract (original)
+│   └── BestDogVotingBug1.sol      # Solidity contract for Exercise 1
+│   └── BestDogVotingBug2.sol      # Solidity contract for Exercise 2 and 3
+├── specs/
+│   └── BestDogVoting.spec     # Formal specification
+├── dogVoting.conf             # Prover configuration file to run on original contract
+├── dogVotingBug1.conf         # Prover configuration file to run on BestDogVotingBug1.sol
+├── dogVotingBug2.conf         # Prover configuration file to run on BestDogVotingBug2.sol
+└── README.md                  # This file
+```
+
+---
+
+## 📌 The Exercises
+
+### ✅ Exercise 1: Inject a Bug That *Is Caught*
+
+- **Goal**: Modify the contract `BestDogVotingBug1.sol` to introduce a **critical bug** that affects either:
+  - Voting outcomes, or
+  - Collected/distributed assets
+
+- This bug **must be detected** by the current specification (i.e., the Prover should report a violation).
+- Run the updated contract using:
+```bash
+certoraRun dogVotingBug1.conf
+```
+
+- **📦 Deliverable**:
+  - Submit the buggy version of the contract as `BestDogVotingBug1.sol`
+  - Write a short description of the bug you introduced and provide the run link from Certora Prover showing the violated specification in the comments of `BestDogVotingBug1.sol`
+
+### ❌ Exercise 2: Inject a Bug That *Is NOT Caught*
+
+- **Goal**: Modify the contract  `BestDogVotingBug2.sol` to introduce another **critical bug**, but this time the bug should **not be detected** by the current specification.
+
+- This simulates a scenario where the spec is incomplete or missing an important rule.
+- Run the updated contract using:
+```bash
+certoraRun dogVotingBug2.conf
+```
+
+- **📦 Deliverable**:
+  - Submit the buggy version of the contract as `BestDogVotingBug2.sol`.
+  - Describe the bug and explain why it is not caught by the spec in the comments of `BestDogVotingBug2.sol`
+  - Provide a run link from Certora Prover showing that the specifications in `BestDogVoting.spec` are not violated when verifying this contract in the comments of `BestDogVotingBug2.sol`
+
+### ✍️ Exercise 3: Add a Rule That Catches the Bug from #2
+
+- **Goal**: Extend the formal specification to **detect** the bug from Exercise 2.
+  - You may modify an existing rule or add a new one.
+  - Your rule should be **general** — it must express a valid correctness property and not be tailored to your specific bug.
+
+- Run the updated spec using:
+
+```bash
+certoraRun dogVotingBug2.conf
+```
+
+- **✅ Expected result**:
+    - The rule **passes** on the correct (original) contract  
+    - The rule **fails** on the buggy version from Exercise 2
+
+- **📦 Deliverable**
+    - Submit the updated `.spec` file 
+    - Provide a brief explanation of the rule and what correctness property it captures as a comment to your spec
+    - Include a two run links to the Certora Prover showing that the rule passes on `BestDogVoting.sol` and is violated on `BestDogVotingBug2.sol` in the comments of your explanation. 
+
+---
+
+## 📤 Submission Instructions
+
+Submit your completed take-home by inviting us to your private repository:
+
+Invite the following people: 
+- @paminacert
+- @shoham-certora
+- @nd-certora
+
+Your submission should include:
+- The updated files `BestDogVotingBug1.sol` and `BestDogVotingBug2.sol` with your bugs. 
+- Descriptions of your bugs for Exercises 1 and 2
+- The updated spec for Exercise 3
+- Certora Prover run links showing the prover results for Exercises 1, 2 and 3. 
+You can add this information as comments in the beginning of the spec file. 
+

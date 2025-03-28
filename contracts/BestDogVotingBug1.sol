@@ -4,13 +4,10 @@ pragma solidity ^0.8.0;
 contract BestDogVoting {
     // The contract owner (only owner can add new categories)
     address public owner;
-
     // Fixed nomination fee (set in the constructor)
     uint256 public nominationFee;
-
     // Total fees collected from nominations
     uint256 public totalFeesCollected;
-
     // Category counter for generating incremental category IDs
     uint256 public categoryCounter;
 
@@ -27,7 +24,7 @@ contract BestDogVoting {
         mapping(uint256 => bool) claimed;
         mapping(uint256 => address) nominatedBy;
     }
-
+    
     // Mapping from dog address to its Dog struct.
     mapping(address => Dog) private dogs;
 
@@ -128,7 +125,6 @@ contract BestDogVoting {
         require(_category < categoryCounter, "Category does not exist");
         Category storage cat = categories[_category];
         require(block.timestamp < cat.deadline, "Voting period has ended");
-
         // Each address may only vote once in this category.
         require(!cat.hasVoted[msg.sender], "Already voted in this category");
 
@@ -140,7 +136,6 @@ contract BestDogVoting {
 
         // Increase the dog's vote total by msg.value.
         cat.votesPerDog[_dog] += msg.value;
-
         // Increase the total funds collected for the category.
         cat.totalVotes += msg.value;
 
@@ -148,7 +143,6 @@ contract BestDogVoting {
         if (dogVotes > cat.currentWinningPoints) {
             // This dog is now the sole leader.
             cat.currentWinningPoints = dogVotes;
-
             // Reset winners to only include this dog.
             delete cat.winners;
             cat.winners.push(_dog);
@@ -184,7 +178,7 @@ contract BestDogVoting {
 
         uint256 numWinners = cat.winners.length;
         require(numWinners > 0, "No winners in this category");
-        
+
         // Calculate reward: total funds divided equally among winners.
         uint256 reward = cat.totalVotes / numWinners;
 
@@ -204,8 +198,7 @@ contract BestDogVoting {
     /// @notice Claim the accumulated nomination fees.
     /// @dev Only the contract owner can call this function.
     function claimFees() external onlyOwner {
-        //mutations don't check totalFees
-        //require(totalFeesCollected > 0, "No fees to claim");
+        require(totalFeesCollected > 0, "No fees to claim");
         uint256 amount = totalFeesCollected;
         totalFeesCollected = 0;
         (bool success, ) = owner.call{value: amount}("");
