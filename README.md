@@ -136,3 +136,5 @@ Your submission should include:
 - Certora Prover run links showing the prover results for Exercises 1, 2 and 3. 
 You can add this information as comments in the beginning of the spec file. 
 
+Make sure to notify your Certora HR liaison of completing the tasks via e-mail.
+
