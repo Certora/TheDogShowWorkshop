@@ -16,21 +16,29 @@ Your goal is to install and run the Certora Prover, understand a simple Solidity
 
 ### 1. Clone the Repository
 
-Start by forking and cloning this repository into a **private** GitHub repository. This will be your working space for the exercise.
+Start by forking and cloning this repository into a **private** GitHub repository. This will be your work space for the exercise. You can do this however you prefer, the important part is that your work space is private. Here's one way to do it via `ssh`:
 
 ```bash
-git clone --bare <this-repo> // create a bare clone
+git clone --bare <this-repo> # create a bare clone
 cd <this-repo>
-git push --mirror git@github.com:<your_username>/<name-of-your-private-github-repo>.git // mirror push against your private repo
+# create a private github repository <name-of-your-private-github-repo>
+git push --mirror git@github.com:<your_username>/<name-of-your-private-github-repo>.git #mirror push against your private repo
 cd ..
-rm -rf <this-repo> // remove your bare clone
+rm -rf <this-repo> #remove your bare clone
 cd ~/<project>
-git clone git@github.com:<your_username>/<name-of-your-private-github-repo>.git // clone your private repo
+git clone git@github.com:<your_username>/<name-of-your-private-github-repo>.git #clone your private repo
 ```
 
 ### 2. Install the Certora CLI
 
 Follow the instructions in the [Certora installation guide](https://docs.certora.com/en/latest/docs/user-guide/getting-started/install.html).
+
+Note: We recommend installing and using [`solc-select`](https://github.com/crytic/solc-select) for Solidity version control which can be easily installed via `brew`or `pip3`. To run this project make sure to install and use a Solidity version >= 0.8.0, e.g. 
+
+```bash
+solc-select install 0.8.21
+solc-select use 0.8.21
+```
 
 Make sure you can successfully run the prover with `certoraRun`.
 
@@ -66,7 +74,7 @@ This will run the Certora Prover on `BestDogVoting.sol` using the provided rules
 
 ## 📌 The Exercises
 
-### ✅ Exercise 1: Inject a Bug That *Is Caught*
+### Exercise 1: Inject a Bug That *Is Caught*
 
 - **Goal**: Modify the contract `BestDogVotingBug1.sol` to introduce a **critical bug** that affects either:
   - Voting outcomes, or
@@ -82,7 +90,7 @@ certoraRun dogVotingBug1.conf
   - Submit the buggy version of the contract as `BestDogVotingBug1.sol`
   - Write a short description of the bug you introduced and provide the run link from Certora Prover showing the violated specification in the comments of `BestDogVotingBug1.sol`
 
-### ❌ Exercise 2: Inject a Bug That *Is NOT Caught*
+### Exercise 2: Inject a Bug That *Is NOT Caught*
 
 - **Goal**: Modify the contract  `BestDogVotingBug2.sol` to introduce another **critical bug**, but this time the bug should **not be detected** by the current specification.
 
@@ -100,7 +108,7 @@ certoraRun dogVotingBug2.conf
 ### ✍️ Exercise 3: Add a Rule That Catches the Bug from #2
 
 - **Goal**: Extend the formal specification to **detect** the bug from Exercise 2.
-  - You may modify an existing rule or add a new one.
+  - You may modify an existing rule/invariant or add a new one.
   - Your rule should be **general** — it must express a valid correctness property and not be tailored to your specific bug.
 
 - Run the updated spec using:
