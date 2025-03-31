@@ -33,7 +33,7 @@ contract BestDogVoting {
     // - currentWinningPoints: the highest vote total in the category
     // - deadline: the voting deadline (as a uint40 timestamp)
     // - nominatedDogs: array of dog addresses nominated in this category
-    // - winners: array of dog addresses that have the highest vote total (could be >1 if tied)
+    // - winners: array of dog addresses that have the highest vote total (could be >1 if tied), up to 10 winners
     // - votesPerDog: mapping from dog address to its total vote amount
     // - hasVoted: mapping to track if an address has already voted in this category
     struct Category {
@@ -147,7 +147,10 @@ contract BestDogVoting {
             delete cat.winners;
             cat.winners.push(_dog);
         } else if (dogVotes == cat.currentWinningPoints) {
-            cat.winners.push(_dog);
+            // there can only be up to 10 winners
+            if (cat.winners.length < 10){
+                cat.winners.push(_dog);
+            }
         }
 
         emit Voted(msg.sender, _dog, _category, msg.value);
