@@ -1,5 +1,11 @@
 use builtin rule sanity; 
 
+/* 
+
+Explain your solutions HERE
+
+*/
+
 methods {
 // methods that are envfree - not dependent on the environment 
     function owner() external returns (address) envfree; 
@@ -41,7 +47,7 @@ rule nominate_integrity(address _dog, uint256 _category) {
     satisfy totalFeesCollected() > totalFeesCollectedBefore;
 }
 
-///@title The Vote function ensures a user has not voted before and marks a user as votes.
+///@title The vote function ensures a user has not voted before and marks a user as voted.
 /// In addition checks that it is possible that the voted dog can become a winner  
 rule vote_integrity(address _dog, uint256 _category) {
     env e; 
@@ -143,23 +149,26 @@ invariant validCategory(address _dog, uint256 _category, address user)
     => _category < categoryCounter();
 
 
-///@title If a dog is nominatedBy someone than it must be listed 
+///@title If a dog is nominated by someone then it must be listed 
 invariant nominatedIsListed(address _dog, uint256 _category)
     currentContract.dogs[_dog].nominatedBy[_category] != 0 => currentContract.dogs[_dog].listed[_category];
 
-///@title If a dog has votes than it must be listed 
+///@title If a dog has votes then it must be listed 
 invariant votedDogIsListed(address _dog, uint256 _category)
     currentContract.categories[_category].votesPerDog[_dog] > 0 => currentContract.dogs[_dog].listed[_category];
 
 ///@title Current winner point is greater-equal to the votes of any dog  
 invariant currentWinningPointsIsMax(address _dog, uint256 _category)
-    currentContract.categories[_category].votesPerDog[_dog] <= currentContract.categories[_category].currentWinningPoints ;
+    currentContract.categories[_category].votesPerDog[_dog] <= currentContract.categories[_category].currentWinningPoints;
 
 ///@title A winning dog has the current winning points  
 invariant winnerHasMaxPoints(address _dog, uint256 _category)
     isWinner(_dog, _category) =>  
             currentContract.categories[_category].votesPerDog[_dog] == currentContract.categories[_category].currentWinningPoints; 
 
+///@title There can be up to 10 winners per category
+invariant maxWinners(uint256 _category)
+    currentContract.categories[_category].winners.length <= 10;
 
 /**** High level rules *****/ 
 
@@ -196,14 +205,13 @@ hook Sstore  currentContract.dogs[KEY address dog].claimed[KEY uint256 category]
     }
 }
 
-///@title The total fees collected is not more than the total nomination fees over all time 
+///@title The total fees collected do not exceed the total nomination fees over all time 
 invariant totalFees() 
-         totalFeesCollected()  <= countAllNominated * nominationFee(); 
+    totalFeesCollected()  <= countAllNominated * nominationFee(); 
 
-///@title The total eth held by the contract is at least the fees collected puls the total votes minus the already claimed prizes 
+///@title The total eth held by the contract is at least the fees collected + the total votes - the already claimed prizes 
 invariant solvency() 
-    nativeBalances[currentContract] >=   totalFeesCollected() + 
-                                    (sumTotalVotes - sumAmountClaimed) 
+    nativeBalances[currentContract] >= totalFeesCollected() + (sumTotalVotes - sumAmountClaimed) 
     { 
         preserved with (env e) {
             require e.msg.sender != currentContract;

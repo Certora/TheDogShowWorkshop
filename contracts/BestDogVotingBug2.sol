@@ -24,7 +24,7 @@ contract BestDogVoting {
         mapping(uint256 => bool) claimed;
         mapping(uint256 => address) nominatedBy;
     }
-
+    
     // Mapping from dog address to its Dog struct.
     mapping(address => Dog) private dogs;
 
@@ -33,7 +33,7 @@ contract BestDogVoting {
     // - currentWinningPoints: the highest vote total in the category
     // - deadline: the voting deadline (as a uint40 timestamp)
     // - nominatedDogs: array of dog addresses nominated in this category
-    // - winners: array of dog addresses that have the highest vote total (could be >1 if tied)
+    // - winners: array of dog addresses that have the highest vote total (could be >1 if tied), up to 10 winners
     // - votesPerDog: mapping from dog address to its total vote amount
     // - hasVoted: mapping to track if an address has already voted in this category
     struct Category {
@@ -125,7 +125,6 @@ contract BestDogVoting {
         require(_category < categoryCounter, "Category does not exist");
         Category storage cat = categories[_category];
         require(block.timestamp < cat.deadline, "Voting period has ended");
-
         // Each address may only vote once in this category.
         require(!cat.hasVoted[msg.sender], "Already voted in this category");
 
@@ -137,7 +136,6 @@ contract BestDogVoting {
 
         // Increase the dog's vote total by msg.value.
         cat.votesPerDog[_dog] += msg.value;
-
         // Increase the total funds collected for the category.
         cat.totalVotes += msg.value;
 
@@ -145,12 +143,14 @@ contract BestDogVoting {
         if (dogVotes > cat.currentWinningPoints) {
             // This dog is now the sole leader.
             cat.currentWinningPoints = dogVotes;
-
             // Reset winners to only include this dog.
             delete cat.winners;
             cat.winners.push(_dog);
         } else if (dogVotes == cat.currentWinningPoints) {
-            cat.winners.push(_dog);
+            // there can only be up to 10 winners
+            if (cat.winners.length < 10){
+                cat.winners.push(_dog);
+            }
         }
 
         emit Voted(msg.sender, _dog, _category, msg.value);
@@ -203,9 +203,7 @@ contract BestDogVoting {
     function claimFees() external onlyOwner {
         require(totalFeesCollected > 0, "No fees to claim");
         uint256 amount = totalFeesCollected;
-        
-        //mutation forget to zero out collected fees
-        //totalFeesCollected = 0;
+        totalFeesCollected = 0;
         (bool success, ) = owner.call{value: amount}("");
         require(success, "Fee transfer failed");
         emit FeesClaimed(owner, amount);
