@@ -108,8 +108,9 @@ certoraRun dogVotingBug2.conf
 ### ✍️ Exercise 3: Add a Rule That Catches the Bug from #2
 
 - **Goal**: Extend the formal specification to **detect** the bug from Exercise 2.
-  - You may modify an existing rule/invariant or add a new one.
+  - Add a new rule that verifies an important security property that will also catch the bug.
   - Your rule should be **general** — it must express a valid correctness property and not be tailored to your specific bug.
+  - Bonus points for parametric rules or invariants. 
 
 - Run the updated spec using:
 
@@ -125,6 +126,17 @@ certoraRun dogVotingBug2.conf
     - Submit the updated `.spec` file 
     - Provide a brief explanation of the rule and what correctness property it captures as a comment to your spec
     - Include a two run links to the Certora Prover showing that the rule passes on `BestDogVoting.sol` and is violated on `BestDogVotingBug2.sol` in the comments of your explanation. 
+
+### ✍️ Exercise 4: Spec Completeness Check
+- **Goal**: Additional specifications review:
+  - Check the code and the spec
+  - Is our spec complete?
+  - Which other security properties can you think of?
+ 
+- **📦 Deliverable**
+    - Submit an additional `extra.spec` file with additional properties that have not been part of our spec but are still important specifications and security properties for the DogVoting contract. 
+    - Provide a brief explanation of each new rule as a comment and what high-level correctness property it captures.
+    - Include a run link to the Certora Prover showing that the rule passes on `BestDogVoting.sol` in the comments of your explanation. 
 
 ---
 
